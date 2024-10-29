@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %} {% load static %} {% bootstrap_css %}
+    {% bootstrap_javascript %}
+  </head>
+  <body>
+    <div class="container">
+      <ul class="nav bg-info">
+        <li class="nav-item">
+          <a class="nav-link link-light" href="/">HOME</a>
+        </li>
+        {% for cat in category %}
+        <li class="nav-item">
+          <a class="nav-link link-light" href="{% url 'category' cat %}"
+            >{{cat}}</a
+          >
+        </li>
+        {% endfor %}
+        <li class="nav-item float-right">
+            <a class="nav-link link-light" href="{% url 'cart' %}">SHOPPING LIST</a>
+        </li>
+      </ul>
+      {% block content %}
+      <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <td>Name</td>
+                <td>Image</td>
+                <td>Price</td>
+                <td>Inventory</td>
+                <td>Other</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.name }}</td>
+                <td><img src="/{{ item.img }}" height="100" width="100" /></td>
+                <td>{{ item.price }} €</td>
+                <td>{{ item.stock }}</td>
+                <td>
+                    <form class="form-inline" method="POST" action="{% url 'add' %}">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <input hidden value={{item.name}} id="name" name="name"/>
+                            <input type="number" class="form-control" id="amount" name="amount" max={{item.stock}} value="1" required />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-success">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      {% endblock %}
+    </div>
+  </body>
+</html>
